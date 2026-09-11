@@ -12,4 +12,20 @@ public class Project
 	public required string Commitment { get; set; }
 	public string? RepositoryUrl { get; set; }
 	public required DateTime CreatedAt { get; set; }
+	public ICollection<ProjectMember> Members { get; private set; } = new List<ProjectMember>();
+
+	public ProjectMember AddMember(ProjectMember member)
+	{
+		ArgumentNullException.ThrowIfNull(member);
+		Members.Add(member);
+
+		return member;
+	}
+
+	public void RemoveParticipant(ProjectMember member)
+	{
+		ArgumentNullException.ThrowIfNull(member);
+		if (!Members.Remove(member))
+			throw new InvalidOperationException("Participant is not a member of this room.");
+	}
 }

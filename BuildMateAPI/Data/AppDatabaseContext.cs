@@ -10,6 +10,7 @@ public class AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : 
 	public DbSet<Project> Projects { get; set; }
 	public DbSet<ProjectNeed> ProjectNeeds { get; set; }
 	public DbSet<ProjectInterest> ProjectInterests { get; set; }
+	public DbSet<ProjectMember> ProjectMembers { get; set; }
 	public DbSet<Technology> Technologies { get; set; }
 	public DbSet<UserTechnology> UserTechnologies { get; set; }
 
@@ -75,6 +76,16 @@ public class AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : 
 			entity.Property(projectInterest => projectInterest.Message).HasColumnName("message");
 			entity.Property(projectInterest => projectInterest.Status).HasColumnName("status");
 			entity.Property(projectInterest => projectInterest.CreatedAt).HasColumnName("created_at");
+		});
+
+		modelBuilder.Entity<ProjectMember>(entity =>
+		{
+			entity.ToTable("ProjectMembers");
+			entity.Property(projectMember => projectMember.Id).HasColumnName("id");
+			entity.Property(projectMember => projectMember.ProjectId).HasColumnName("project_id");
+			entity.Property(projectMember => projectMember.UserId).HasColumnName("user_id");
+			entity.Property(projectMember => projectMember.Role).HasColumnName("role");
+			entity.Property(projectMember => projectMember.JoinedAt).HasColumnName("joined_at");
 		});
 
 		modelBuilder.Entity<Technology>(entity =>

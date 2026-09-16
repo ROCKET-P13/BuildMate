@@ -22,7 +22,7 @@ public class Project
 		return member;
 	}
 
-	public void RemoveParticipant(ProjectMember member)
+	public void RemoveMember(ProjectMember member)
 	{
 		ArgumentNullException.ThrowIfNull(member);
 		if (!Members.Remove(member))

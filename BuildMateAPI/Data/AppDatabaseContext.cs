@@ -37,10 +37,18 @@ public class AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : 
 			entity.Property(developerProfile => developerProfile.Id).HasColumnName("id");
 			entity.Property(developerProfile => developerProfile.UserId).HasColumnName("user_id");
 			entity.Property(developerProfile => developerProfile.Bio).HasColumnName("bio");
-			entity.Property(developerProfile => developerProfile.AvialabilityHours).HasColumnName("availability_hours");
-			entity.Property(developerProfile => developerProfile.ExperienceLevel).HasColumnName("experience_level");
-			entity.Property(developerProfile => developerProfile.LookingFor).HasColumnName("looking_for");
-			entity.Property(developerProfile => developerProfile.Timezone).HasColumnName("timezone");
+			entity
+				.Property(developerProfile => developerProfile.AvialabilityHours)
+				.HasColumnName("availability_hours");
+			entity
+				.Property(developerProfile => developerProfile.ExperienceLevel)
+				.HasColumnName("experience_level");
+			entity
+				.Property(developerProfile => developerProfile.LookingFor)
+				.HasColumnName("looking_for");
+			entity
+				.Property(developerProfile => developerProfile.Timezone)
+				.HasColumnName("timezone");
 		});
 
 		modelBuilder.Entity<Project>(entity =>
@@ -55,6 +63,12 @@ public class AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : 
 			entity.Property(project => project.Commitment).HasColumnName("commitment");
 			entity.Property(project => project.RepositoryUrl).HasColumnName("repository_url");
 			entity.Property(project => project.CreatedAt).HasColumnName("created_at");
+
+			entity
+				.HasMany(project => project.Members)
+				.WithOne()
+				.HasForeignKey(projectMember => projectMember.ProjectId)
+				.OnDelete(DeleteBehavior.Cascade);
 		});
 
 		modelBuilder.Entity<ProjectNeed>(entity =>
@@ -71,11 +85,15 @@ public class AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : 
 		{
 			entity.ToTable("ProjectInterests");
 			entity.Property(projectInterest => projectInterest.Id).HasColumnName("id");
-			entity.Property(projectInterest => projectInterest.ProjectId).HasColumnName("project_id");
+			entity
+				.Property(projectInterest => projectInterest.ProjectId)
+				.HasColumnName("project_id");
 			entity.Property(projectInterest => projectInterest.UserId).HasColumnName("user_id");
 			entity.Property(projectInterest => projectInterest.Message).HasColumnName("message");
 			entity.Property(projectInterest => projectInterest.Status).HasColumnName("status");
-			entity.Property(projectInterest => projectInterest.CreatedAt).HasColumnName("created_at");
+			entity
+				.Property(projectInterest => projectInterest.CreatedAt)
+				.HasColumnName("created_at");
 		});
 
 		modelBuilder.Entity<ProjectMember>(entity =>
@@ -100,8 +118,12 @@ public class AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : 
 			entity.ToTable("UserTechnologies");
 			entity.Property(userTechnology => userTechnology.Id).HasColumnName("id");
 			entity.Property(userTechnology => userTechnology.UserId).HasColumnName("user_id");
-			entity.Property(userTechnology => userTechnology.ProficiencyLevel).HasColumnName("proficiency_level");
-			entity.Property(userTechnology => userTechnology.YearsOfExperience).HasColumnName("years_of_experience");
+			entity
+				.Property(userTechnology => userTechnology.ProficiencyLevel)
+				.HasColumnName("proficiency_level");
+			entity
+				.Property(userTechnology => userTechnology.YearsOfExperience)
+				.HasColumnName("years_of_experience");
 		});
 	}
 }

@@ -1,17 +1,19 @@
-using BuildMateAPI.Data;
-using Microsoft.EntityFrameworkCore;
-
 namespace BuildMateAPI;
 
-public static class LocalStartup
+public class LocalStartup(IConfiguration configuration)
 {
-	public static void ConfigureWebApplication(WebApplicationBuilder builder)
-	{
-		var configuration = builder.Configuration;
-		var connectionString =
-			configuration.GetConnectionString("DefaultConnection")
-			?? throw new InvalidOperationException("Set ConnectionStrings:DefaultConnection (env: ConnectionStrings__DefaultConnection) for local development.");
+	public IConfiguration Configuration { get; } = configuration;
 
-		builder.Services.AddDbContext<AppDatabaseContext>(options => options.UseNpgsql(connectionString));
+	public void ConfigureServices(IServiceCollection services)
+	{
+		services.AddControllers();
+		services.AddEndpointsApiExplorer();
+	}
+
+	public void Configure(IApplicationBuilder app)
+	{
+		// app.UseHttpsRedirection();
+		app.UseRouting();
+		app.UseEndpoints(endpoints => endpoints.MapControllers());
 	}
 }

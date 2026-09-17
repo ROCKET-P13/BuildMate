@@ -2,6 +2,8 @@ using BuildMateAPI.Controllers.Requests;
 using BuildMateAPI.Data.UnitOfWork.Interfaces;
 using BuildMateAPI.Factories.ProjectFactory.DTOs;
 using BuildMateAPI.Factories.ProjectFactory.Interfaces;
+using BuildMateAPI.Factories.ProjectViewModelFactory.Interfaces;
+using BuildMateAPI.Models;
 using BuildMateAPI.Repositories.ProjectRepository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,15 +14,17 @@ namespace BuildMateAPI.Controllers;
 public class ProjectsController(
 	IUnitOfWork unitOfWork,
 	IProjectFactory projectFactory,
-	IProjectRepository projectRepository
+	IProjectRepository projectRepository,
+	IProjectViewModelFactory projectViewModelFactory
 ) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	private readonly IProjectFactory _projectFactory = projectFactory;
 	private readonly IProjectRepository _projectRepository = projectRepository;
+	private readonly IProjectViewModelFactory _projectViewModelFactory = projectViewModelFactory;
 
 	[HttpGet("{projectId:int}")]
-	public async Task<ActionResult> GetById([FromRoute] Guid projectId)
+	public async Task<ActionResult<ProjectViewModel>> GetById([FromRoute] Guid projectId)
 	{
 		var project = await _projectRepository.FindById(projectId);
 		if (project is null)
@@ -28,11 +32,13 @@ public class ProjectsController(
 			return NotFound("Project not found");
 		}
 
-		return Ok(project);
+		return Ok(_projectViewModelFactory.FromProject(project));
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> Create([FromBody] CreateProjectRequest request)
+	public async Task<ActionResult<ProjectViewModel>> Create(
+		[FromBody] CreateProjectRequest request
+	)
 	{
 		var project = _projectFactory.FromDto(
 			new ProjectFactoryDTO
@@ -49,6 +55,7 @@ public class ProjectsController(
 
 		_projectRepository.Upsert(project);
 		await _unitOfWork.SaveChanges();
-		return Ok(project);
+
+		return Ok(_projectViewModelFactory.FromProject(project));
 	}
 }

@@ -58,4 +58,17 @@ public class ProjectsController(
 
 		return Ok(_projectViewModelFactory.FromProject(project));
 	}
+
+	[HttpPost("/{projectId:guid}/members")]
+	public async Task<ActionResult<ProjectViewModel>> AddMember(
+		[FromRoute] Guid projectId,
+		[FromBody] AddProjectMemberRequest request
+	)
+	{
+		var project = await _projectRepository.FindById(projectId);
+		if (project is null)
+		{
+			return NotFound("Project not found");
+		}
+	}
 }
